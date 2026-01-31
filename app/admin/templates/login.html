@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+    <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Admin Panel</h1>
+            <p class="text-gray-500 mt-2">Portfolio Management System</p>
+        </div>
+
+        {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <p class="text-sm">{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <form method="post" action="/admin/login">
+            <div class="mb-6">
+                <label for="username" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Username
+                </label>
+                <input type="text" id="username" name="username" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="Enter your username">
+            </div>
+
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Password
+                </label>
+                <input type="password" id="password" name="password" required
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="Enter your password">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors focus:ring-4 focus:ring-blue-200">
+                Sign In
+            </button>
+        </form>
+
+        <p class="text-center text-gray-500 text-sm mt-6">
+            Protected area. Authorized access only.
+        </p>
+    </div>
+</div>
+{% endblock %}

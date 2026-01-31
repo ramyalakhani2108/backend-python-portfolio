@@ -1,0 +1,177 @@
+{% extends "layout.html" %}
+
+{% block title %}Personal Info{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Personal Information</h1>
+    <p class="text-gray-600 mt-2">Manage your profile details</p>
+</div>
+
+{% if message %}
+<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+    <p class="text-sm">{{ message }}</p>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+    <p class="text-sm">{{ error }}</p>
+    {% if api_error_raw or api_error_url %}
+    <div class="mt-2 text-xs text-gray-700 bg-white p-2 rounded border mt-3">
+        <strong>Debug:</strong>
+        {% if api_error_url %}<div>URL: <code>{{ api_error_url }}</code></div>{% endif %}
+        {% if api_error_raw %}
+        <div class="mt-1">Response snippet:
+            <pre class="whitespace-pre-wrap">{{ api_error_raw }}</pre>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    <form method="post" action="/admin/personal">
+        <input type="hidden" name="is_update" value="{{ 'true' if not is_new else 'false' }}">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Full Name -->
+            <div>
+                <label for="name" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Full Name <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="name" name="name" required value="{{ personal_info.get('name', '') }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="John Doe">
+            </div>
+
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Professional Title <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="title" name="title" required value="{{ personal_info.get('title', '') }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="Full Stack Developer">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Email <span class="text-red-500">*</span>
+                </label>
+                <input type="email" id="email" name="email" required value="{{ personal_info.get('email', '') }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="john@example.com">
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label for="phone" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Phone
+                </label>
+                <input type="tel" id="phone" name="phone" value="{{ personal_info.get('phone', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="+1 234 567 8900">
+            </div>
+
+            <!-- Place -->
+            <div>
+                <label for="place" class="block text-gray-700 text-sm font-semibold mb-2">
+                    City/Place
+                </label>
+                <input type="text" id="place" name="place" value="{{ personal_info.get('place', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="San Francisco">
+            </div>
+
+            <!-- Country -->
+            <div>
+                <label for="country" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Country
+                </label>
+                <input type="text" id="country" name="country" value="{{ personal_info.get('country', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="United States">
+            </div>
+
+            <!-- Profile Image URL -->
+            <div>
+                <label for="profile_image_url" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Profile Image URL
+                </label>
+                <input type="url" id="profile_image_url" name="profile_image_url"
+                    value="{{ personal_info.get('profile_image_url', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="https://example.com/photo.jpg">
+            </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="mt-6">
+            <label for="bio" class="block text-gray-700 text-sm font-semibold mb-2">
+                Bio <span class="text-red-500">*</span>
+            </label>
+            <textarea id="bio" name="bio" required rows="4"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                placeholder="Write a short bio about yourself...">{{ personal_info.get('bio', '') }}</textarea>
+        </div>
+
+        <h3 class="text-lg font-semibold text-gray-800 mt-8 mb-4">Social Links</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- GitHub URL -->
+            <div>
+                <label for="github_url" class="block text-gray-700 text-sm font-semibold mb-2">
+                    GitHub URL
+                </label>
+                <input type="url" id="github_url" name="github_url"
+                    value="{{ personal_info.get('github_url', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="https://github.com/username">
+            </div>
+
+            <!-- LinkedIn URL -->
+            <div>
+                <label for="linkedin_url" class="block text-gray-700 text-sm font-semibold mb-2">
+                    LinkedIn URL
+                </label>
+                <input type="url" id="linkedin_url" name="linkedin_url"
+                    value="{{ personal_info.get('linkedin_url', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="https://linkedin.com/in/username">
+            </div>
+
+            <!-- Twitter URL -->
+            <div>
+                <label for="twitter_url" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Twitter URL
+                </label>
+                <input type="url" id="twitter_url" name="twitter_url"
+                    value="{{ personal_info.get('twitter_url', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="https://twitter.com/username">
+            </div>
+
+            <!-- Website URL -->
+            <div>
+                <label for="website_url" class="block text-gray-700 text-sm font-semibold mb-2">
+                    Personal Website
+                </label>
+                <input type="url" id="website_url" name="website_url"
+                    value="{{ personal_info.get('website_url', '') or '' }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                    placeholder="https://yourwebsite.com">
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <button type="submit"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors focus:ring-4 focus:ring-blue-200">
+                {{ 'Update Personal Info' if not is_new else 'Create Personal Info' }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
